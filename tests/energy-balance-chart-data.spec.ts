@@ -1,4 +1,5 @@
 import { test } from '../fixtures/testSetup';
+import { expect } from '@playwright/test';
 
 test.describe('Verify Energy Balance Chart Tests', () => {
   let energyProfilingChartPage;
@@ -8,14 +9,17 @@ test.describe('Verify Energy Balance Chart Tests', () => {
   });
 
   test('energy Balance chart loads successfully', async () => {
-    await energyProfilingChartPage.checkIfChartIsPresent();
+    const isChartVisible = await energyProfilingChartPage.checkIfChartIsPresent();
+    await expect(isChartVisible).toBeTruthy();
   });
 
   test('displays energy data for yesterday', async () => {
-    await energyProfilingChartPage.checkIfChartIsPresentForYesterday();
+    const isGraphVisible = await energyProfilingChartPage.checkIfChartIsPresentForYesterday();
+    await expect(isGraphVisible).toBeTruthy();
   });
 
   test('displays energy data for a selected date', async () => {
-    await energyProfilingChartPage.checkGraphForDate(2);
+    const isGraphVisible = await energyProfilingChartPage.checkGraphForDate(2);
+    await expect(isGraphVisible).toBeTruthy();
   });
 });

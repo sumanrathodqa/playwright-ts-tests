@@ -38,8 +38,12 @@ export class EnergyProfilingChartPage {
      */
     async checkIfChartIsPresent() {
         await this.logSelectedMonthAndYear('Checking chart for the month:');
-        await expect(this.dateElements.first()).toBeVisible;
-        console.log('Chart is displayed as expected');
+
+        // Ensure the page is fully loaded
+        await this.page.waitForLoadState('networkidle');
+
+        const firstDateElement = await this.dateElements.first();
+        return await firstDateElement.isVisible();
     }
 
     /**
@@ -84,11 +88,6 @@ export class EnergyProfilingChartPage {
         }
 
         const dateBar = bars[dateIndex];
-
-        // Check if the bar is visible
-        await expect(dateBar).toBeVisible();
-        console.log(`Graph is displayed for date: ${dayNumber}`);
-
-        return dateBar;
+        return await dateBar.isVisible();
     }
 }
