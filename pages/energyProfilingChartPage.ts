@@ -80,29 +80,24 @@ export class EnergyProfilingChartPage {
         // Count the bars
         const barCount = await bars.count();
         console.log(`No. of bars found on the chart is: ${barCount}`);
-    // Ensure the requested day number is valid
-    if (dayNumber < 1 || dayNumber > barCount) {
-        throw new Error(`Invalid day: ${dayNumber}. No data available beyond day ${barCount}.`);
-    }
-     // Get the corresponding bar (assuming bars are in order of dates)
-     const dateBar = bars.nth(dayNumber - 1);; // Adjusting index since arrays are zero-based
+        // Ensure the requested day number is valid
+        if (dayNumber < 1 || dayNumber > barCount) {
+            throw new Error(`Invalid day: ${dayNumber}. No data available beyond day ${barCount}.`);
+        }
+        // Get the corresponding bar (assuming bars are in order of dates)
+        const dateBar = bars.nth(dayNumber - 1);
 
-     // Ensure the bar is defined before proceeding
-     if (!dateBar) {
-         throw new Error(`No bar found for day ${dayNumber}`);
-     }
- 
-     // Ensure the bar is visible
-     const isVisible = await dateBar.isVisible();
- 
-     // Convert height to a number and check if it's greater than 0
-     if (isVisible) {
-         console.log(`Chart exists for day ${dayNumber}`);
-         return true;
-     }
- 
-     console.log(`No data for day ${dayNumber}`);
-     return false;
-       
+        // Ensure the bar is visible
+        const isVisible = await dateBar.isVisible();
+
+        // Convert height to a number and check if it's greater than 0
+        if (isVisible) {
+            console.log(`Chart exists for day ${dayNumber}`);
+            return true;
+        }
+
+        console.log(`No data for day ${dayNumber}`);
+        return false;
+
     }
 }
