@@ -19,7 +19,7 @@ test.describe('Verify Energy Balance Chart Tests', () => {
   });
 
   test('displays energy data for a selected date', async () => {
-    const isGraphVisible = await energyProfilingChartPage.checkGraphForDate(10);
+    const isGraphVisible = await energyProfilingChartPage.checkGraphForDate(5);
     await expect(isGraphVisible).toBeTruthy();
   });
 
