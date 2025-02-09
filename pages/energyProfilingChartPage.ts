@@ -7,6 +7,7 @@ export class EnergyProfilingChartPage {
     private kwhElements: Locator;
     private barElements: Locator;
     private currentMonthAndYear: Locator;
+    private apiUrlForLoadingChartData: string;
 
     constructor(page: Page) {
         this.page = page;
@@ -78,20 +79,30 @@ export class EnergyProfilingChartPage {
 
         // Count the bars
         const barCount = await bars.count();
+        console.log(`No. of bars found on the chart is: ${barCount}`);
+    // Ensure the requested day number is valid
+    if (dayNumber < 1 || dayNumber > barCount) {
+        throw new Error(`Invalid day: ${dayNumber}. No data available beyond day ${barCount}.`);
+    }
+     // Get the corresponding bar (assuming bars are in order of dates)
+     const dateBar = bars.nth(dayNumber - 1);; // Adjusting index since arrays are zero-based
 
-        if (barCount === 0) {
-            console.log("No bars found on the chart.");
-            return false;
-        }
-
-        // Check if the bar for the specified dayNumber exists
-        const barForDay = await bars.nth(dayNumber - 1); // Assuming dayNumber starts from 1
-        if (await barForDay.isVisible()) {
-            console.log(`Bar is present for day ${dayNumber}`);
-            return true;
-        } else {
-            console.log(`Bar is NOT present for day ${dayNumber}`);
-            return false;
-        }
+     // Ensure the bar is defined before proceeding
+     if (!dateBar) {
+         throw new Error(`No bar found for day ${dayNumber}`);
+     }
+ 
+     // Ensure the bar is visible
+     const isVisible = await dateBar.isVisible();
+ 
+     // Convert height to a number and check if it's greater than 0
+     if (isVisible) {
+         console.log(`Chart exists for day ${dayNumber}`);
+         return true;
+     }
+ 
+     console.log(`No data for day ${dayNumber}`);
+     return false;
+       
     }
 }
