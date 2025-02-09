@@ -4,14 +4,16 @@ export class EnergyProfilingChartPage {
     readonly page: Page;
     private monthView: Locator;
     private dateElements: Locator;
+    private kwhElements: Locator;
     private barElements: Locator;
     private currentMonthAndYear: Locator;
 
     constructor(page: Page) {
         this.page = page;
-        this.monthView = page.locator('li[data-interval="month"] a');
-        this.dateElements = page.locator('.highcharts-axis-labels text');
-        this.barElements = page.locator('.highcharts-series rect');
+        this.monthView = page.locator('[data-interval="month"] a');
+        this.kwhElements = page.locator('.highcharts-yaxis-labels');
+        this.dateElements = page.locator('.highcharts-xaxis-labels');
+        this.barElements = page.locator('.highcharts-series-3 .highcharts-point[stroke-dasharray="none"]')
         this.currentMonthAndYear = page.locator(
             '.chart-datepicker-container .chart-datepicker-input'
         );
@@ -42,8 +44,12 @@ export class EnergyProfilingChartPage {
         // Ensure the page is fully loaded
         await this.page.waitForLoadState('networkidle');
 
-        const firstDateElement = await this.dateElements.first();
-        return await firstDateElement.isVisible();
+        const [isDateVisible, isKwhVisible] = await Promise.all([
+            this.dateElements.first().isVisible(),
+            this.kwhElements.first().isVisible()
+        ]);
+
+        return isDateVisible && isKwhVisible;
     }
 
     /**
@@ -61,33 +67,31 @@ export class EnergyProfilingChartPage {
         return await this.checkGraphForDate(yesterday);
     }
 
-
     /**
  * Function to verify if energy Balance chart for a specified date
  */
+
     async checkGraphForDate(dayNumber: number) {
         await this.page.waitForLoadState('networkidle');
 
-        // Get all x-axis labels (dates)
-        const dateLabels = await this.dateElements.allTextContents();
+        const bars = this.barElements;
 
-        // Find the index of the given date
-        const dateIndex = dateLabels.findIndex(
-            (label) => label.trim() === dayNumber.toString()
-        );
+        // Count the bars
+        const barCount = await bars.count();
 
-        if (dateIndex === -1) {
-            throw new Error(`The date (${dayNumber}) is not displayed on the chart.`);
+        if (barCount === 0) {
+            console.log("No bars found on the chart.");
+            return false;
         }
 
-        // Get all bars in the chart
-        const bars = await this.barElements.all();
-
-        if (dateIndex >= bars.length) {
-            throw new Error(`Bar index (${dateIndex}) is out of range.`);
+        // Check if the bar for the specified dayNumber exists
+        const barForDay = await bars.nth(dayNumber - 1); // Assuming dayNumber starts from 1
+        if (await barForDay.isVisible()) {
+            console.log(`Bar is present for day ${dayNumber}`);
+            return true;
+        } else {
+            console.log(`Bar is NOT present for day ${dayNumber}`);
+            return false;
         }
-
-        const dateBar = bars[dateIndex];
-        return await dateBar.isVisible();
     }
 }
