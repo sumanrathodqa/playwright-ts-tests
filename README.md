@@ -79,6 +79,11 @@ Before you begin, ensure you have the following installed on your machine:
    npx playwright test --ui
    ```
 
+6. Run tests with UI mode and specific browser(chromium/webkit/firefox)
+   ```bash
+   npx playwright test --project=chromium --headed
+   ```
+
 ## Viewing Reports
 Playwright generates a report that you can view after running tests:
   ```bash
