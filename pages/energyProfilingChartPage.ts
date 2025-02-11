@@ -14,7 +14,7 @@ export class EnergyProfilingChartPage {
         this.monthView = page.locator('[data-interval="month"] a');
         this.kwhElements = page.locator('.highcharts-yaxis-labels');
         this.dateElements = page.locator('.highcharts-xaxis-labels');
-        this.barElements = page.locator('.highcharts-series-3 .highcharts-point[stroke-dasharray="none"]')
+        this.barElements = page.locator('.highcharts-series-5 .highcharts-point[stroke-dasharray="none"]')
         this.currentMonthAndYear = page.locator(
             '.chart-datepicker-container .chart-datepicker-input'
         );
